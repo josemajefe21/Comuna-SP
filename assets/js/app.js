@@ -76,6 +76,30 @@ $$('.tab-btn').forEach(btn => {
     btn.classList.add('active');
     btn.setAttribute('aria-selected','true');
     const id = btn.dataset.tab;
+    // Gate de acceso Admin
+    if (id === 'admin') {
+      const isAuthed = (sessionStorage.getItem('sp_admin_auth') === '1');
+      let ok = isAuthed;
+      if (!ok) {
+        const ans = prompt('Contraseña de administrador:');
+        ok = (ans === 'SP');
+      }
+      if (!ok) {
+        // revertir selección UI a Noticias
+        $$('.tab-btn').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected','false'); });
+        const noticiasBtn = Array.from($$('.tab-btn')).find(b=>b.dataset.tab==='noticias');
+        if (noticiasBtn) { noticiasBtn.classList.add('active'); noticiasBtn.setAttribute('aria-selected','true'); }
+        ['noticias','obras_portada','obras','eventos','contacto','admin'].forEach(sec => {
+          const el = document.getElementById(sec);
+          if (!el) return;
+          el.hidden = !(sec === 'noticias' || sec === 'obras_portada');
+        });
+        sessionStorage.removeItem('sp_admin_auth');
+        document.body.classList.remove('admin-mode');
+        return;
+      }
+      sessionStorage.setItem('sp_admin_auth', '1');
+    }
     const sections = ['noticias','obras_portada','obras','eventos','contacto','admin'];
     sections.forEach(sec => {
       const el = document.getElementById(sec);
@@ -92,9 +116,11 @@ $$('.tab-btn').forEach(btn => {
     if (id === 'admin') {
       if (footer) footer.hidden = true;
       if (fab) fab.hidden = true;
+      document.body.classList.add('admin-mode');
     } else {
       if (footer) footer.hidden = false;
       if (fab) fab.hidden = false;
+      document.body.classList.remove('admin-mode');
     }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
