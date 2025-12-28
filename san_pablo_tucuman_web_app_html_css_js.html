@@ -1045,5 +1045,12 @@
     init();
   </script>
   <script src="assets/js/app.js"></script>
+  <script type="module">
+    // Carga opcional de Firebase si está configurado (no rompe si falta)
+    try {
+      const mod = await import('./assets/js/firebase.js');
+      if (mod.ensureAnonAuth) { await mod.ensureAnonAuth(); }
+    } catch (_) { /* Firebase no configurado aún */ }
+  </script>
 </body>
 </html>

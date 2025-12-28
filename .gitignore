@@ -17,3 +17,6 @@ Thumbs.db
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+ 
+# Firebase local config (no versionar credenciales)
+assets/js/firebase-config.js
